@@ -1049,15 +1049,17 @@ body {
     });
     /* Orchestre : 15 rangs, A au plus près de la scène */
     var rows = 'ABCDEFGHIJKLMNO'.split('');
-    var x0 = 100, step = 15, sw = 11, sh = 9, yA = 352, dy = 13;
+    var step = 15, sw = 11, sh = 9, yA = 352, dy = 13;
+    var counts = { A: 13, B: 13, C: 14, D: 15, E: 16 };
     var ours = [];
     rows.forEach(function (r, ri) {
       var y = yA - ri * dy;
+      var n = counts[r] || 17, x0 = 220 - (n - 1) * step / 2;
       el('text', { x: 86, y: y + 3, 'text-anchor': 'middle', fill: r === 'E' ? velvet : soft, 'font-family': mono, 'font-size': r === 'E' ? 9 : 7 }, r);
       el('text', { x: 354, y: y + 3, 'text-anchor': 'middle', fill: r === 'E' ? velvet : soft, 'font-family': mono, 'font-size': r === 'E' ? 9 : 7 }, r);
-      for (var c = 0; c < 17; c++) {
+      for (var c = 0; c < n; c++) {
         var x = x0 + c * step;
-        /* Vu depuis la salle (scène en bas sur le plan), le 8 et le 10 sont les 4e et 5e pairs à partir du centre */
+        /* D'après la billetterie : rang E (5e depuis la scène), 4e et 5e fauteuils en partant de la gauche */
         if (r === 'E' && (c === 4 || c === 3)) { ours.push({ x: x, y: y, n: c === 4 ? 8 : 10 }); continue; }
         el('rect', { x: x - sw / 2, y: y - sh / 2, width: sw, height: sh, rx: 2.5, fill: seat });
       }
