@@ -638,7 +638,7 @@ body {
           <section class="plan" id="ta-place" aria-label="Plan de la salle">
             <h2>Ta place</h2>
             <p class="where">Orchestre · rang <em>E</em> · fauteuils <em>8</em> et <em>10</em></p>
-            <svg id="plan" viewBox="0 0 440 300" role="img" aria-label="Plan de l'orchestre : rang E, fauteuils 8 et 10 en surbrillance, à quelques rangs de la scène"></svg>
+            <svg id="plan" viewBox="0 0 440 420" role="img" aria-label="Plan du Théâtre du Palais-Royal : orchestre face à la scène, corbeille, balcon et galerie en fer à cheval. Rang E, fauteuils 8 et 10 en surbrillance, au cinquième rang depuis la scène."></svg>
             <p class="note">Plan indicatif. Au théâtre, les numéros pairs se suivent d'un côté de la salle : le 8 et le 10 sont côte à côte.</p>
           </section>
 
@@ -1024,9 +1024,10 @@ body {
     });
   });
 
-  /* --- Plan de l'orchestre (indicatif) --- */
+  /* --- Plan de la salle, d'après le plan de la billetterie (scène en bas) --- */
   (function drawPlan() {
     var svg = document.getElementById('plan');
+    svg.setAttribute('viewBox', '0 0 440 420');
     var NS = 'http://www.w3.org/2000/svg';
     function el(tag, attrs, text) {
       var n = document.createElementNS(NS, tag);
@@ -1035,37 +1036,47 @@ body {
       svg.appendChild(n);
       return n;
     }
-    var ink = '#2b1a12', soft = '#6b5240', seat = '#d8c6a4', velvet = '#5a0f1c', gold = '#a8854a';
-    el('path', { d: 'M70 46 Q220 6 370 46 L370 54 L70 54 Z', fill: velvet });
-    el('text', { x: 220, y: 40, 'text-anchor': 'middle', fill: '#f3e6cc', 'font-family': 'Cutive Mono, monospace', 'font-size': 11, 'letter-spacing': 3 }, 'SCÈNE');
-    var rows = 'ABCDEFGHIJKL'.split('');
-    var cx = 220, top = 76, gapY = 18, seatW = 12, gapX = 15, aisle = 14, perSide = 8;
-    var hilite = [];
+    var ink = '#2b1a12', soft = '#6b5240', seat = '#d8c6a4', velvet = '#5a0f1c', gold = '#a8854a', paper = '#f3e6cc';
+    var mono = 'Cutive Mono, monospace';
+    /* Galerie, balcon, corbeille : le fer à cheval */
+    [
+      { d: 'M16 372 V172 Q16 92 100 68 Q220 40 340 68 Q424 92 424 172 V372', y: 56, t: 'GALERIE' },
+      { d: 'M38 372 V182 Q38 116 110 100 Q220 74 330 100 Q402 116 402 182 V372', y: 88, t: 'BALCON' },
+      { d: 'M62 372 V192 Q62 142 122 130 Q220 108 318 130 Q378 142 378 192 V372', y: 121, t: 'CORBEILLE' }
+    ].forEach(function (a) {
+      el('path', { d: a.d, fill: 'none', stroke: soft, 'stroke-width': 1.2, opacity: .55 });
+      el('text', { x: 220, y: a.y, 'text-anchor': 'middle', fill: soft, 'font-family': mono, 'font-size': 8, 'letter-spacing': 2 }, a.t);
+    });
+    /* Orchestre : 15 rangs, A au plus près de la scène */
+    var rows = 'ABCDEFGHIJKLMNO'.split('');
+    var x0 = 100, step = 15, sw = 11, sh = 9, yA = 352, dy = 13;
+    var ours = [];
     rows.forEach(function (r, ri) {
-      var y = top + ri * gapY;
-      el('text', { x: 24, y: y + 4, 'text-anchor': 'middle', fill: soft, 'font-family': 'Cutive Mono, monospace', 'font-size': 10 }, r);
-      el('text', { x: 416, y: y + 4, 'text-anchor': 'middle', fill: soft, 'font-family': 'Cutive Mono, monospace', 'font-size': 10 }, r);
-      for (var i = 0; i < perSide; i++) {
-        var odd = 1 + i * 2, even = 2 + i * 2;
-        var xl = cx - aisle / 2 - seatW / 2 - i * gapX;
-        var xr = cx + aisle / 2 + seatW / 2 + i * gapX;
-        el('rect', { x: xl - seatW / 2, y: y - 5, width: seatW, height: 10, rx: 3, fill: seat });
-        var isOurs = r === 'E' && (even === 8 || even === 10);
-        if (isOurs) hilite.push({ x: xr, y: y, n: even });
-        else el('rect', { x: xr - seatW / 2, y: y - 5, width: seatW, height: 10, rx: 3, fill: seat });
+      var y = yA - ri * dy;
+      el('text', { x: 86, y: y + 3, 'text-anchor': 'middle', fill: r === 'E' ? velvet : soft, 'font-family': mono, 'font-size': r === 'E' ? 9 : 7 }, r);
+      el('text', { x: 354, y: y + 3, 'text-anchor': 'middle', fill: r === 'E' ? velvet : soft, 'font-family': mono, 'font-size': r === 'E' ? 9 : 7 }, r);
+      for (var c = 0; c < 17; c++) {
+        var x = x0 + c * step;
+        /* Vu depuis la salle (scène en bas sur le plan), le 8 et le 10 sont les 4e et 5e pairs à partir du centre */
+        if (r === 'E' && (c === 4 || c === 3)) { ours.push({ x: x, y: y, n: c === 4 ? 8 : 10 }); continue; }
+        el('rect', { x: x - sw / 2, y: y - sh / 2, width: sw, height: sh, rx: 2.5, fill: seat });
       }
     });
-    el('text', { x: 220, y: top + rows.length * gapY + 14, 'text-anchor': 'middle', fill: soft, 'font-family': 'EB Garamond, serif', 'font-style': 'italic', 'font-size': 12 }, 'fond de salle · balcons au-dessus');
-    hilite.forEach(function (h) {
+    el('text', { x: 220, y: 371, 'text-anchor': 'middle', fill: soft, 'font-family': mono, 'font-size': 8, 'letter-spacing': 2 }, 'ORCHESTRE');
+    el('rect', { x: 140, y: 380, width: 160, height: 30, fill: velvet });
+    el('text', { x: 220, y: 399, 'text-anchor': 'middle', fill: paper, 'font-family': mono, 'font-size': 11, 'letter-spacing': 4 }, 'SCÈNE');
+    ours.forEach(function (h) {
       el('circle', { cx: h.x, cy: h.y, r: 10, fill: gold, opacity: .55, class: 'seat-pulse' });
-      el('rect', { x: h.x - seatW / 2 - 1, y: h.y - 6, width: seatW + 2, height: 12, rx: 3, fill: velvet, stroke: gold, 'stroke-width': 1.5 });
+      el('rect', { x: h.x - sw / 2 - 1, y: h.y - sh / 2 - 1, width: sw + 2, height: sh + 2, rx: 2.5, fill: velvet, stroke: gold, 'stroke-width': 1.5 });
     });
-    var a = hilite[0], b = hilite[1];
-    var lx = (a.x + b.x) / 2;
-    el('path', { d: 'M' + lx + ' ' + (a.y + 9) + ' L' + lx + ' ' + (a.y + 38) + ' L' + (lx + 70) + ' ' + (a.y + 38), fill: 'none', stroke: velvet, 'stroke-width': 1 });
-    el('text', { x: lx + 74, y: a.y + 42, fill: velvet, 'font-family': 'Bodoni Moda, serif', 'font-style': 'italic', 'font-size': 14 }, 'toi & moi');
-    el('text', { x: a.x, y: a.y - 9, 'text-anchor': 'middle', fill: ink, 'font-family': 'Cutive Mono, monospace', 'font-size': 9 }, '8');
-    el('text', { x: b.x, y: b.y - 9, 'text-anchor': 'middle', fill: ink, 'font-family': 'Cutive Mono, monospace', 'font-size': 9 }, '10');
+    var mx = (ours[0].x + ours[1].x) / 2, my = ours[0].y;
+    /* Bulle « toi & moi » au-dessus des deux fauteuils */
+    var by = my - 48;
+    el('path', { d: 'M' + (mx - 6) + ' ' + (by + 22) + ' L' + mx + ' ' + (my - 8) + ' L' + (mx + 6) + ' ' + (by + 22) + ' Z', fill: velvet });
+    el('rect', { x: mx - 44, y: by, width: 88, height: 23, rx: 4, fill: velvet, stroke: gold, 'stroke-width': 1 });
+    el('text', { x: mx, y: by + 16, 'text-anchor': 'middle', fill: paper, 'font-family': 'Bodoni Moda, serif', 'font-style': 'italic', 'font-size': 13 }, 'toi & moi');
+    el('text', { x: ours[0].x, y: my + 15, 'text-anchor': 'middle', fill: ink, 'font-family': mono, 'font-size': 8 }, '8');
+    el('text', { x: ours[1].x, y: my + 15, 'text-anchor': 'middle', fill: ink, 'font-family': mono, 'font-size': 8 }, '10');
   })();
 
   /* --- Compte à rebours : dimanche 15 novembre 2026, 18h00 à Paris (UTC+1) --- */
