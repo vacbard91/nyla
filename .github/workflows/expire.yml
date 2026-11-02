@@ -1,0 +1,22 @@
+name: Retirer l'invitation
+on:
+  schedule:
+    - cron: "0 11 3 11 *"   # 3 novembre, 11h00 UTC = 12h00 à Paris
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  expire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remplacer tout le site par la page "rideau" et effacer l'historique
+        run: |
+          cp expired-root.html /tmp/index.html
+          git checkout --orphan vide
+          git rm -rf --quiet .
+          cp /tmp/index.html index.html
+          mkdir -p expired && cp /tmp/index.html expired/index.html
+          git add index.html expired/index.html
+          git -c user.name="nyla-bot" -c user.email="nyla-bot@users.noreply.github.com" commit -m "Rideau"
+          git push --force origin vide:main
