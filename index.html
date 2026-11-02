@@ -361,6 +361,34 @@ body {
 .replay:hover { background: rgba(217,178,106,.1); }
 .replay:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
+/* Programme, infos, histoire */
+.block { display: grid; gap: 14px; text-align: left; }
+.block h2 { margin: 0; text-align: center; font-family: var(--mono); font-weight: 400; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); }
+.timeline, .anecdotes { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.timeline li, .anecdotes li { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.timeline time, .anecdotes b {
+  font-family: var(--display); font-weight: 600; font-size: 17px; color: var(--velvet);
+  text-align: right; font-variant-numeric: tabular-nums lining-nums;
+}
+.timeline li:nth-child(3) span { font-weight: 600; }
+.timeline span, .anecdotes span { font-size: 17px; line-height: 1.4; }
+.anecdotes li { grid-template-columns: 3.5em minmax(0, 1fr); }
+.facts { margin: 0; display: grid; gap: 8px; }
+.facts div { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); text-align: right; }
+.facts dd { margin: 0; font-size: 17px; line-height: 1.4; }
+.cal { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.cal-btn {
+  display: inline-block; text-decoration: none; color: var(--velvet);
+  border: 1px solid var(--velvet); padding: 9px 16px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+}
+.cal-btn:hover { background: rgba(90,15,28,.07); }
+.cal-btn:focus-visible { outline: 2px solid var(--velvet); outline-offset: 2px; }
+@media (max-width: 400px) {
+  .timeline li { grid-template-columns: 6em minmax(0, 1fr); }
+}
+
 /* Photo façon tirage */
 .photo { margin: 0; justify-self: center; display: grid; gap: 10px; justify-items: center; }
 .photo .print {
@@ -545,6 +573,44 @@ body {
             <div class="cd-row" id="cd"></div>
           </div>
 
+          <div class="rule" role="presentation"></div>
+
+          <section class="block" aria-labelledby="h-prog">
+            <h2 id="h-prog">Le programme de la soirée</h2>
+            <ol class="timeline">
+              <li><time>17 h 15</time><span>On se retrouve dans les jardins du Palais-Royal, à deux pas du théâtre.</span></li>
+              <li><time>17 h 40</time><span>On entre et on s'installe : rang E, fauteuils 8 et 10.</span></li>
+              <li><time>18 h 00</time><span>Les trois coups. Le rideau se lève.</span></li>
+              <li><time>vers 19 h 50</time><span>Sortie, des étoiles plein les yeux.</span></li>
+              <li><time>Ensuite</time><span>On prolonge la soirée, rien que tous les deux.</span></li>
+            </ol>
+          </section>
+
+          <section class="block" aria-labelledby="h-info">
+            <h2 id="h-info">À savoir</h2>
+            <dl class="facts">
+              <div><dt>Métro</dt><dd>Palais-Royal – Musée du Louvre, lignes 1 et 7</dd></div>
+              <div><dt>Durée</dt><dd>environ 1 h 50</dd></div>
+              <div><dt>Sac</dt><dd>un seul petit sac par personne, pas de valise (règle du théâtre)</dd></div>
+              <div><dt>Tenue</dt><dd>celle qui te plaît, tu seras la plus belle de la salle</dd></div>
+            </dl>
+          </section>
+
+          <section class="block" aria-labelledby="h-histoire">
+            <h2 id="h-histoire">La petite histoire</h2>
+            <ul class="anecdotes">
+              <li><b>1897</b><span>Le 28 décembre, <em>Cyrano de Bergerac</em> est joué pour la première fois au théâtre de la Porte-Saint-Martin, à Paris. Le public l'acclame pendant de longues minutes.</span></li>
+              <li><b>2016</b><span>Alexis Michalik crée <em>Edmond</em> au Théâtre du Palais-Royal, là même où on va s'asseoir.</span></li>
+              <li><b>2017</b><span>La pièce remporte cinq Molières.</span></li>
+              <li><b>2019</b><span>Michalik en tire un film. Mais rien ne vaut la scène.</span></li>
+            </ul>
+          </section>
+
+          <div class="cal">
+            <a class="cal-btn" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Edmond%20au%20Th%C3%A9%C3%A2tre%20du%20Palais-Royal&amp;dates=20261115T170000Z/20261115T185000Z&amp;location=Th%C3%A9%C3%A2tre%20du%20Palais-Royal%2C%2038%20rue%20de%20Montpensier%2C%2075001%20Paris&amp;details=Carr%C3%A9%20Or%2C%20rang%20E%2C%20fauteuils%208%20et%2010">Ajouter à Google Agenda</a>
+            <span id="icsWrap" hidden><a class="cal-btn" href="edmond.ics">Ajouter au calendrier iPhone</a></span>
+          </div>
+
           <p class="ps">Le Parc des Princes, ce sera pour une autre fois. Promis.</p>
           <p class="signature">Je t'aime. On y va ensemble.</p>
           <p class="signature">J'espère que tu vas adorer, Nyla.</p>
@@ -570,8 +636,7 @@ body {
         <label for="msg" class="tear-hint" style="color:var(--gold-soft);text-align:center">Ou écris-moi ce que tu veux</label>
         <textarea id="msg" maxlength="1000" placeholder="Ton message…"></textarea>
         <div class="send-row">
-          <a class="send" id="wa" href="https://wa.me/" target="_blank" rel="noopener">Me l'envoyer sur WhatsApp</a>
-          <button class="send ghost" id="copy" type="button">Copier pour un texto</button>
+          <button class="send" id="copy" type="button">Copier pour un texto</button>
         </div>
         <p class="status" id="status" aria-live="polite"></p>
       </section>
@@ -774,30 +839,20 @@ body {
 
   /* --- Sa réponse --- */
   var msg = document.getElementById('msg');
-  var wa = document.getElementById('wa');
   var copyBtn = document.getElementById('copy');
   var statusEl = document.getElementById('status');
-  var WA_NUMBER = ''; /* ex. '33612345678' pour ouvrir directement la conversation */
   function fullText() {
     var t = msg.value.trim();
     return t ? 'Réponse à ton invitation pour Edmond : ' + t : '';
   }
-  function syncWa() {
-    var t = fullText();
-    wa.href = 'https://wa.me/' + WA_NUMBER + (t ? '?text=' + encodeURIComponent(t) : '');
-  }
-  msg.addEventListener('input', syncWa);
   document.querySelectorAll('#chips button').forEach(function (b) {
     b.addEventListener('click', function () {
       msg.value = (msg.value ? msg.value.trim() + ' ' : '') + b.textContent;
-      syncWa();
       msg.focus();
     });
   });
-  wa.addEventListener('click', function (e) {
-    if (!fullText()) { e.preventDefault(); statusEl.textContent = 'Écris ou choisis un petit mot d\'abord.'; msg.focus(); return; }
-    statusEl.textContent = WA_NUMBER ? 'WhatsApp s\'ouvre avec ton message.' : 'WhatsApp s\'ouvre : choisis-moi dans tes contacts.';
-  });
+  /* Fichier agenda : seulement sur le site hébergé (le lecteur claude.ai bloque les téléchargements) */
+  if (/github\.io$/.test(location.hostname)) document.getElementById('icsWrap').hidden = false;
   copyBtn.addEventListener('click', function () {
     var text = fullText();
     if (!text) { statusEl.textContent = 'Écris ou choisis un petit mot d\'abord.'; msg.focus(); return; }
@@ -809,7 +864,6 @@ body {
       statusEl.textContent = 'Message sélectionné. Copie-le et envoie-le-moi par texto.';
     });
   });
-  syncWa();
 
   /* --- Plan de l'orchestre (indicatif) --- */
   (function drawPlan() {
